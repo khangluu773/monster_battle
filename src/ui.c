@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 
+#include "game.h"
 #include "ui.h"
 
 ui_state_t uis;
@@ -44,6 +45,7 @@ void main_menu_event() {
     switch (uis.selected_option) {
     case START_GAME:
         // Start Game
+        init_game();
         ui_combat_screen();
         break;
     case OPTIONS:
@@ -77,11 +79,6 @@ void combat_menu_event() {
 // Draw function for the main menu
 int draw_main_menu() {
 
-    // Draw
-    BeginDrawing();
-
-    ClearBackground(RAYWHITE);
-
     // Draw the options
     for (int i = 0; i < uis.num_items; i++) {
         int textX = uis.screen_width / 2 - MeasureText(uis.items[i], 20) / 2;
@@ -95,21 +92,19 @@ int draw_main_menu() {
         }
     }
 
-    EndDrawing();
-
     return 0;
 }
 
-// Draw function for the combat screen
-int draw_combat_screen() {
+void draw_combatant_view() {
+    // Draw the border
+    DrawRectangleRoundedLines(
+        (Rectangle){20, 20, uis.screen_width - 40, uis.screen_height * 2 / 3 - 20}, 0.1, 10, 2, BLACK);
 
-    // Draw
-    BeginDrawing();
+    // Draw the text
+    DrawText("Combatant View", 30, 30, 20, BLACK);
+}
 
-    ClearBackground(RAYWHITE);
-
-    /* Combat Menu */
-
+void draw_combat_menu() {
     // Draw the border
     DrawRectangleRoundedLines(
         (Rectangle){20, uis.screen_height * 2 / 3 + 20, uis.screen_width * 1 / 3 - 10, uis.screen_height * 1 / 3 - 40}, 0.1, 10, 2, BLACK);
@@ -125,9 +120,9 @@ int draw_combat_screen() {
             DrawText(TextFormat("  %s  ", uis.items[i]), textX, textY, 20, BLACK);
         }
     }
+}
 
-    /* Combat Log */
-
+void draw_combat_log() {
     // Draw the border
     DrawRectangleRoundedLines(
         (Rectangle){uis.screen_width * 1 / 3 + 20, uis.screen_height * 2 / 3 + 20, uis.screen_width * 2 / 3 - 40, uis.screen_height * 1 / 3 - 40},
@@ -136,8 +131,24 @@ int draw_combat_screen() {
     // Draw the text
     DrawText("Combat Log", uis.screen_width * 1 / 3 + 30, uis.screen_height * 2 / 3 + 30, 20,
              BLACK);
+}
 
-    EndDrawing();
+void draw_avatar(Image avatar, Vector2 position, int size) {
+    Texture2D avatar_texture = LoadTextureFromImage(avatar);
+    DrawTextureEx(avatar_texture, position, 0, size / avatar.width, WHITE);
+}
+
+// Draw function for the combat screen
+int draw_combat_screen() {
+
+    /* Combat Menu */
+    draw_combat_menu();
+
+    /* Combat Log */
+    draw_combat_log();
+
+    /* Combatant View */
+    draw_combatant_view();
 
     return 0;
 }

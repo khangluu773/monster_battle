@@ -2,6 +2,15 @@
 
 #include "common.h"
 #include "ui.h"
+#include "game.h"
+#include "renderer.h"
+
+
+// Initialize the game
+void init() {
+    init_ui();
+    InitWindow(uis.screen_width, uis.screen_height, "Monster Battle");
+}
 
 // Poll for input and other events
 int event_loop() {
@@ -28,8 +37,18 @@ int run_frame() {
     // Listen to input or other events
     event_loop();
 
-    // Render the current screen
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+    
+    if (gs.in_combat) {
+        draw_active_frame();
+    }
+
+    // Render the UI elements (regardless of combat)
     uis.draw();
+
+    EndDrawing();
 
     return 0;
 }
